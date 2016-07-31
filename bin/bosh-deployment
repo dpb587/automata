@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eu
+
+dir="$1"; shift
+
+export PATH="$( cd "$( dirname "$0" )" && pwd ):$PATH"
+export PIPELINE="$( basename "$dir" )"
+
+vars=$( mktemp ${TMPDIR:-/tmp}/output.XXXXXXXXXX )
+vars "$dir" > "$vars"
+
+manifest=$( mktemp ${TMPDIR:-/tmp}/output.XXXXXXXXXX )
+manifest "$dir/manifest" "$vars" > "$manifest"
+
+cat "$manifest"

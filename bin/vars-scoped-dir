@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+(
+  for file in $( find "$2" -type f -name '*.json' ); do
+    name=$( basename "$file" | sed -E 's/\.json$//' | sed -E 's/[^a-z0-9A-Z]/_/g' | sed -E 's/([_]+)/_/g' )
+
+    jq \
+      --arg name "$name" \
+      '{ key : $name, value : . }' \
+      < "$file"
+  done
+) \
+  | jq -sS \
+    --arg scope "$1" \
+    '{ ($scope) : from_entries }'

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+cd "$2"
+
+( for file in $( find . -name *-stemcell.json -path '*/deployment/*' | sed 's#^./##' ) ; do
+  echo "\"$file\""
+
+  suffix=$( basename "$file" | sed 's/\.json$//' )
+  midfix=$( basename "$( dirname "$file" )" )
+  prefix=$( basename "$( dirname "$( dirname "$file" )" )" )
+  echo "\"$prefix-$midfix-$suffix\""
+
+  cat "$file"
+done ) | jq --arg name "$1" -s '{ ($name): ( . as $tuples | [ range(0; length / 3) * 3 | { "_path": $tuples[.], "_name": $tuples[. + 1] } + $tuples[. + 2] ] ) }'

@@ -1,0 +1,62 @@
+#!/bin/bash
+
+set -eu
+
+export PATH="$( cd "$( dirname "$0" )" && pwd ):$PATH"
+
+if [ -n "${REDIRECT_STDOUT:-}" ]; then
+  exec 1>$PWD/$REDIRECT_STDOUT
+fi
+
+if [ -n "${REDIRECT_PWD:-}" ]; then
+  cd $REDIRECT_PWD
+fi
+
+if [ -n "${manifest:-}" ]; then
+  manifest="$manifest"
+elif [ -n "${1:-}" ]; then
+  manifest="$1"
+else
+  echo 'ERROR: missing $manifest or $1' >&2
+  exit 1
+fi
+
+if [ -n "${vars:-}" ]; then
+  vars="$vars"
+elif [ -n "${2:-}" ]; then
+  vars="cat $2"
+elif [ -d "$( dirname "$manifest" )/vars" ]; then
+  vars="vars $( dirname "$manifest" )"
+else
+  vars="cat /dev/null"
+fi
+
+tmpdir=$( mktemp -d "${TMPDIR:-/tmp}/manifest.XXXXXXXXX" )
+tmpsrc="$tmpdir/manifest"
+
+if [ -x "$manifest" ]; then
+  "$manifest" <( $vars ) > "$tmpsrc.old"
+elif [[ "$manifest.jq" =~ \.jq$ ]]; then
+  $vars | jq -f "$manifest" > "$tmpsrc.old"
+elif [[ "$manifest" =~ \.json$ ]]; then
+  cat "$manifest" > "$tmpsrc.old"
+elif [[ "$manifest" =~ \.yml$ ]]; then
+  cat "$manifest" > "$tmpsrc.old"
+else
+  echo "Failed to parse manifest: $manifest" >&2
+  exit 1
+fi
+
+jq -r \
+  --arg tmp $tmpsrc \
+  '
+    ( ._transformers // [] ) | map( . + " < " + $tmp + ".old > " + $tmp + ".new ; cp " + $tmp + ".{new,old}" )[]
+  ' \
+  < "$tmpsrc.old" \
+  > "$tmpsrc.transforms"
+
+sh "$tmpsrc.transforms"
+
+cat "$tmpsrc.old"
+
+rm -fr "$tmpdir"

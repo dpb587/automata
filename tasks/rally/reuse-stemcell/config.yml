@@ -1,0 +1,20 @@
+---
+platform: "linux"
+image_resource:
+  type: "docker-image"
+  source:
+    repository: "dpb587/automata"
+    tag: "bosh"
+inputs:
+  - name: "repository"
+outputs:
+  - name: "repository"
+    path: "repository-output"
+run:
+  path: "repository/ci/automata/tasks/rally/reuse-stemcell/execute.sh"
+params:
+  from: ~ # required
+  config: ~ # required
+  commit_prefix: ~
+  git_committer_email: "ci@localhost"
+  git_committer_name: "CI"

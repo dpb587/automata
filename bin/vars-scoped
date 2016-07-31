@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+jq \
+  --arg scope "$1" \
+  '{ ($scope) : . }' \
+  < "$2"

@@ -1,0 +1,17 @@
+---
+platform: "linux"
+image_resource:
+  type: "docker-image"
+  source:
+    repository: "dpb587/automata"
+    tag: "bosh"
+inputs:
+  - name: "repository"
+  - name: "release"
+run:
+  path: "repository/ci/automata/tasks/bosh/upload-release/execute.sh"
+params:
+  target: ~ # required
+  username: admin
+  password: admin
+  ca_cert: ~

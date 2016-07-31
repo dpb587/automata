@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -eu
+
+export PATH="$( cd "$( dirname "$0" )" && pwd ):$PATH"
+
+cd "$1"
+
+(
+  for vars in $( find vars -mindepth 1 -not -path '*/\.*' | sort ) ; do
+    if [ -x "$vars" ] ; then
+      "$vars"
+    #elif [[ "$vars" =~ \.yml$ ]] ; then
+    #  yaml2json "$vars"
+    else
+      cat "$vars"
+    fi
+  done
+) \
+  | jq -sS 'add'

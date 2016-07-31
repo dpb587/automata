@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -eu
+
+dir="$1"; shift
+
+export PATH="$( cd "$( dirname "$0" )" && pwd ):$PATH"
+
+if [ -z "${PIPELINE:-}" ]; then
+  export PIPELINE="$( basename "$dir" )"
+fi
+
+vars=$( mktemp ${TMPDIR:-/tmp}/output.XXXXXXXXXX )
+vars "$dir" > "$vars"
+
+cp "$vars" /tmp/asdf.vars
+manifest=$( mktemp ${TMPDIR:-/tmp}/output.XXXXXXXXXX )
+manifest "$dir/pipeline.jq" "$vars" > "$manifest"
+
+vars_simple=$( mktemp ${TMPDIR:-/tmp}/output.XXXXXXXXXX )
+jq 'to_entries | map(select(.|type == "string")) | from_entries' < "$vars" > "$vars_simple"
+
+fly \
+  --target "$FLY_TARGET" \
+  set-pipeline \
+  --pipeline "$PIPELINE" \
+  --config "$manifest" \
+  --load-vars-from "$vars_simple" \
+  $@

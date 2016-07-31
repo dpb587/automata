@@ -1,0 +1,19 @@
+---
+platform: "linux"
+image_resource:
+  type: "docker-image"
+  source:
+    repository: "dpb587/automata"
+    tag: "bosh"
+inputs:
+  - name: "stack"
+  - name: "repository"
+outputs:
+  - name: "repository"
+    path: "repository-output"
+run:
+  path: "repository/ci/automata/tasks/aws-cloudformation-stack/archive-state/execute.sh"
+params:
+  state: ~ # required
+  git_committer_email: "ci@localhost"
+  git_committer_name: "CI"

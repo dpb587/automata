@@ -1,0 +1,17 @@
+---
+platform: "linux"
+image_resource:
+  type: "docker-image"
+  source:
+    repository: "dpb587/automata"
+    tag: "bosh"
+inputs:
+  - name: "repository"
+outputs:
+  - name: "manifest"
+run:
+  path: "repository/ci/automata/bin/manifest"
+params:
+  manifest: ~ # required
+  REDIRECT_PWD: repository
+  REDIRECT_STDOUT: manifest/manifest.json

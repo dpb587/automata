@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -eu
+
+(
+  for arg in "$@" ; do
+    split1=(${arg//=/ })
+    key=${split1[0]}
+    split2=(${split1[1]//./ })
+    id=${split2[0]}
+    field=${split2[1]}
+  
+    jq --arg key "$key" --arg value "$( lpass show --sync=no --$field $id )" -n '{ ($key) : ($value) }'
+  done
+) \
+  | jq -s 'add'
