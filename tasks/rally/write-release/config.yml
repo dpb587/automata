@@ -12,7 +12,7 @@ outputs:
   - name: "repository"
     path: "repository-output"
 run:
-  path: "repository/ci/automata/tasks/rally/write-release/execute.sh"
+  path: "repository/automata/tasks/rally/write-release/execute.sh"
 params:
   config: ~ # required
   commit_prefix: ~

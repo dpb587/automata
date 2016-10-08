@@ -12,7 +12,7 @@ outputs:
   - name: "repository"
     path: "repository-output"
 run:
-  path: "repository/ci/automata/tasks/bosh/create-env/execute.sh"
+  path: "repository/automata/tasks/bosh/create-env/execute.sh"
 params:
   manifest: ~ # required
   state: ~ # required

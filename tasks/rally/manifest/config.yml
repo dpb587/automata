@@ -10,7 +10,7 @@ inputs:
 outputs:
   - name: "manifest"
 run:
-  path: "repository/ci/automata/bin/manifest"
+  path: "repository/automata/bin/manifest"
 params:
   manifest: ~ # required
   REDIRECT_PWD: repository

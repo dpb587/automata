@@ -11,7 +11,7 @@ outputs:
   - name: "repository"
     path: "repository-output"
 run:
-  path: "repository/ci/automata/tasks/rally/reuse-stemcell/execute.sh"
+  path: "repository/automata/tasks/rally/reuse-stemcell/execute.sh"
 params:
   from: ~ # required
   config: ~ # required

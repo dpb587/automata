@@ -9,7 +9,7 @@ inputs:
   - name: "repository"
   - name: "release"
 run:
-  path: "repository/ci/automata/tasks/bosh/upload-release/execute.sh"
+  path: "repository/automata/tasks/bosh/upload-release/execute.sh"
 params:
   target: ~ # required
   username: admin

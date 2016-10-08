@@ -8,7 +8,7 @@ image_resource:
 inputs:
   - name: "repository"
 run:
-  path: "repository/ci/automata/tasks/bosh/cleanup/execute.sh"
+  path: "repository/automata/tasks/bosh/cleanup/execute.sh"
 params:
   target: ~ # required
   username: admin

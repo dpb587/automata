@@ -24,7 +24,7 @@ def wrap_with_locks($locks):
 def automata_rally_manifest($path):
   {
     "task": "generate-manifest",
-    "file": "repository/ci/automata/tasks/rally/manifest/config.yml",
+    "file": "repository/automata/tasks/rally/manifest/config.yml",
     "params": {
       "manifest": $path
     }
@@ -53,7 +53,7 @@ def upload_release($release):
         "do": [
           {
             "task": "upload",
-            "file": "repository/ci/automata/tasks/bosh/upload-release/config.yml",
+            "file": "repository/automata/tasks/bosh/upload-release/config.yml",
             "params": {
               "target": .bosh_target,
               "ca_cert": .bosh_ca_cert,
@@ -68,7 +68,7 @@ def upload_release($release):
   }
 ;
 
-def deployment($zone; $deployment; $component):
+def deployment($deployment; $component):
   {
     "name": ("update-" + $deployment + "-" + $component),
     "serial": true,
@@ -87,7 +87,7 @@ def deployment($zone; $deployment; $component):
           }
         ]
       },
-      automata_rally_manifest($zone + "/" + $deployment + "/" + $component + "/manifest.jq"),
+      automata_rally_manifest("zone/" + $deployment + "/" + $component + "/manifest.jq"),
       lock($deployment),
       {
         "do": [
@@ -106,7 +106,7 @@ def deployment($zone; $deployment; $component):
   }
 ;
 
-def stack($zone; $deployment; $component; $options):
+def stack($deployment; $component; $options):
   {
     "name": ("update-" + $deployment + "-" + $component),
     "serial": true,
@@ -122,7 +122,7 @@ def stack($zone; $deployment; $component; $options):
           }
         ]
       },
-      automata_rally_manifest($zone + "/" + $deployment + "/" + $component + "/template.jq"),
+      automata_rally_manifest("zone/" + $deployment + "/" + $component + "/template.jq"),
       lock($deployment),
       {
         "do": [
@@ -137,12 +137,12 @@ def stack($zone; $deployment; $component; $options):
           },
           {
             "task": "archive-stack",
-            "file": "repository/ci/automata/tasks/aws-cloudformation-stack/archive-state/config.yml",
+            "file": "repository/automata/tasks/aws-cloudformation-stack/archive-state/config.yml",
             "input_mapping": {
               "stack": ($deployment + "-stack")
             },
             "params": {
-              "state": ($zone + "/" + $deployment + "/" + $component + "/state")
+              "state": ("zone/" + $deployment + "/" + $component + "/state")
             }
           },
           {
@@ -184,7 +184,7 @@ def rally_releases($releases):
             "do": [
               {
                 "task": "upload",
-                "file": "repository/ci/automata/tasks/bosh/upload-release/config.yml",
+                "file": "repository/automata/tasks/bosh/upload-release/config.yml",
                 "params": {
                   "target": ($dot.bosh_target),
                   "ca_cert": ($dot.bosh_ca_cert),
@@ -221,7 +221,7 @@ def rally_releases($releases):
           },
           {
             "task": "bump",
-            "file": "repository/ci/automata/tasks/rally/write-release/config.yml",
+            "file": "repository/automata/tasks/rally/write-release/config.yml",
             "params": {
               "config": ._path,
               "commit_prefix": (._path | split("/")[1])
@@ -275,7 +275,7 @@ def rally_stemcells($stemcells):
             "do": [
               {
                 "task": "upload",
-                "file": "repository/ci/automata/tasks/bosh/upload-stemcell/config.yml",
+                "file": "repository/automata/tasks/bosh/upload-stemcell/config.yml",
                 "params": {
                   "target": ($dot.bosh_target),
                   "ca_cert": ($dot.bosh_ca_cert),
@@ -312,7 +312,7 @@ def rally_stemcells($stemcells):
           },
           {
             "task": "bump",
-            "file": "repository/ci/automata/tasks/rally/write-stemcell/config.yml",
+            "file": "repository/automata/tasks/rally/write-stemcell/config.yml",
             "params": {
               "config": ._path,
               "commit_prefix": (._path | split("/")[1])

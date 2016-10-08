@@ -12,7 +12,7 @@ outputs:
   - name: "repository"
     path: "repository-output"
 run:
-  path: "repository/ci/automata/tasks/aws-cloudformation-stack/archive-state/execute.sh"
+  path: "repository/automata/tasks/aws-cloudformation-stack/archive-state/execute.sh"
 params:
   state: ~ # required
   git_committer_email: "ci@localhost"
